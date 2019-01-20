@@ -12,18 +12,21 @@ package org.pkaboo.jpa.nestedset;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.junit.After;
+import org.junit.Test;
 import org.pkaboo.jpa.nestedset.model.Category;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import static org.testng.Assert.*;
+
+import static org.junit.Assert.*;
 
 public class BasicTest extends FunctionalNestedSetTest {
     private Category progCat;
     private Category javaCat;
     private Category netCat;
 
-    @AfterMethod
-    @Override protected void closeEntityManager() {
+    @After
+    @Override
+    public void closeEntityManager() {
         super.closeEntityManager();
         this.progCat = null;
         this.javaCat = null;

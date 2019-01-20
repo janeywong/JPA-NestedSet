@@ -9,21 +9,22 @@
 
 package org.pkaboo.jpa.nestedset;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 
 public class FunctionalNestedSetTest {
-    protected EntityManagerFactory emFactory;
+    private static EntityManagerFactory emFactory;
     protected EntityManager em;
     protected JpaNestedSetManager nsm;
 
-    @BeforeClass(alwaysRun=true)
-    protected void createEntityManagerFactory() {
+    @BeforeClass
+    public static void createEntityManagerFactory() {
         try {
             emFactory = Persistence.createEntityManagerFactory("TestPU");
         } catch (Exception ex) {
@@ -31,14 +32,14 @@ public class FunctionalNestedSetTest {
         }
     }
 
-    @BeforeMethod(alwaysRun=true)
-    protected void createEntityManager() {
+    @Before
+    public void createEntityManager() {
         em = emFactory.createEntityManager();
         this.nsm = new JpaNestedSetManager(this.em);
     }
 
-    @AfterMethod
-    protected void closeEntityManager() {
+    @After
+    public void closeEntityManager() {
         if (em != null) {
             em.getTransaction().begin();
             em.createQuery("delete from Category").executeUpdate();
@@ -50,7 +51,7 @@ public class FunctionalNestedSetTest {
     }
 
     @AfterClass
-    protected void closeEntityManagerFactory() {
+    public static void closeEntityManagerFactory() {
         if (emFactory != null) {
             emFactory.close();
         }

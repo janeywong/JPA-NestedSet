@@ -9,8 +9,8 @@
 
 package org.pkaboo.jpa.nestedset;
 
+import org.junit.Test;
 import org.pkaboo.jpa.nestedset.model.Category;
-import org.testng.annotations.Test;
 
 public class MultiRootNodeTest extends FunctionalNestedSetTest {
 
