@@ -47,39 +47,39 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
         this.type = (Class<T>) node.getClass();
     }
 
-    @Override public int getId() {
+    @Override public Long getId() {
         return this.node.getId();
     }
 
-    @Override public int getLeftValue() {
+    @Override public Integer getLeftValue() {
         return this.node.getLeftValue();
     }
 
-    @Override public int getRightValue() {
+    @Override public Integer getRightValue() {
         return this.node.getRightValue();
     }
 
-    @Override public int getLevel() {
+    @Override public Integer getLevel() {
         return this.node.getLevel();
     }
 
-    @Override public int getRootValue() {
+    @Override public Long getRootValue() {
         return this.node.getRootValue();
     }
 
-    @Override public void setRootValue(int value) {
+    @Override public void setRootValue(Long value) {
         this.node.setRootValue(value);
     }
 
-    @Override public void setLeftValue(int value) {
+    @Override public void setLeftValue(Integer value) {
         this.node.setLeftValue(value);
     }
 
-    @Override public void setRightValue(int value) {
+    @Override public void setRightValue(Integer value) {
         this.node.setRightValue(value);
     }
 
-    @Override public void setLevel(int level) {
+    @Override public void setLevel(Integer level) {
         this.node.setLevel(level);
     }
 
@@ -204,7 +204,7 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
 
         int newLeft = getRightValue();
         int newRight = getRightValue() + 1;
-        int newRoot = getRootValue();
+        Long newRoot = getRootValue();
 
         shiftRLValues(newLeft, 0, 2, newRoot);
         child.setLevel(getLevel() + 1);
@@ -223,7 +223,7 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
 
         int newLeft = dest.getLeftValue();
         int newRight = dest.getLeftValue() + 1;
-        int newRoot = dest.getRootValue();
+        Long newRoot = dest.getRootValue();
 
         shiftRLValues(newLeft, 0, 2, newRoot);
         setLevel(dest.getLevel());
@@ -240,7 +240,7 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
 
         int newLeft = dest.getRightValue() + 1;
         int newRight = dest.getRightValue() + 2;
-        int newRoot = dest.getRootValue();
+        Long newRoot = dest.getRootValue();
 
         shiftRLValues(newLeft, 0, 2, newRoot);
         setLevel(dest.getLevel());
@@ -257,7 +257,7 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
 
         int newLeft = dest.getRightValue();
         int newRight = dest.getRightValue() + 1;
-        int newRoot = dest.getRootValue();
+        Long newRoot = dest.getRootValue();
 
         shiftRLValues(newLeft, 0, 2, newRoot);
         setLevel(dest.getLevel() + 1);
@@ -274,7 +274,7 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
 
         int newLeft = dest.getLeftValue() + 1;
         int newRight = dest.getLeftValue() + 2;
-        int newRoot = dest.getRootValue();
+        Long newRoot = dest.getRootValue();
 
         shiftRLValues(newLeft, 0, 2, newRoot);
         setLevel(dest.getLevel());
@@ -286,7 +286,7 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
 
     @Override
     public void delete() {
-        int oldRoot = getRootValue();
+        Long oldRoot = getRootValue();
         Configuration cfg = nsm.getConfig(this.type);
         String rootIdFieldName = cfg.getRootIdFieldName();
         String leftFieldName = cfg.getLeftFieldName();
@@ -329,7 +329,7 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
      * @param delta The offset by which to shift the left/right values (can be negative).
      * @param rootId The root/tree ID of the nodes to shift.
      */
-    private void shiftRLValues(int first, int last, int delta, int rootId) {
+    private void shiftRLValues(int first, int last, int delta, Long rootId) {
     	Configuration cfg = nsm.getConfig(this.type);
         String rootIdFieldName = cfg.getRootIdFieldName();
         String leftFieldName = cfg.getLeftFieldName();
@@ -484,7 +484,7 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
     private void updateNode(int destLeft, int levelDiff) {
         int left = getLeftValue();
         int right = getRightValue();
-        int rootId = getRootValue();
+        Long rootId = getRootValue();
         int treeSize = right - left + 1;
 
         // Make room in the new branch
@@ -534,7 +534,7 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
         if (dest == this.node) {
             throw new IllegalArgumentException("Cannot move node as next sibling of itself");
         }
-        if (dest.getRootValue() != getRootValue()) {
+        if (!dest.getRootValue().equals(getRootValue())) {
             moveBetweenTrees(dest, dest.getRightValue() + 1, 3);
         } else {
             // Move within tree
@@ -550,7 +550,7 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
             throw new IllegalArgumentException("Cannot move node as first child of itself");
         }
 
-        if (dest.getRootValue() != getRootValue()) {
+        if (!dest.getRootValue().equals(getRootValue())) {
             moveBetweenTrees(dest, dest.getLeftValue() + 1, 2);
         } else {
             // Move within tree
@@ -566,7 +566,7 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
             throw new IllegalArgumentException("Cannot move node as first child of itself");
         }
 
-        if (dest.getRootValue() != getRootValue()) {
+        if (!dest.getRootValue().equals(getRootValue())) {
             moveBetweenTrees(dest, dest.getLeftValue() + 1, 4);
         } else {
             // Move within tree
@@ -594,8 +594,8 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
         String entityName = cfg.getEntityName();
 
         // Move between trees: Detach from old tree & insert into new tree
-        int newRoot = dest.getRootValue();
-        int oldRoot = getRootValue();
+        Long newRoot = dest.getRootValue();
+        Long oldRoot = getRootValue();
         int oldLft = getLeftValue();
         int oldRgt = getRightValue();
         int oldLevel = getLevel();
@@ -663,7 +663,7 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
         shiftRLValues(first, 0, delta, oldRoot);
     }
 
-    public void makeRoot(int newRootId) {
+    public void makeRoot(Long newRootId) {
         if (isRoot()) {
             return;
         }
@@ -677,12 +677,12 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
 
         int oldRgt = getRightValue();
         int oldLft = getLeftValue();
-        int oldRoot = getRootValue();
+        Long oldRoot = getRootValue();
         int oldLevel = getLevel();
 
         // Update descendants lft/rgt/root/level values
         int diff = 1 - oldLft;
-        int newRoot = newRootId;
+        Long newRoot = newRootId;
 
         StringBuilder updateQuery = new StringBuilder();
         updateQuery.append("update ").append(entityName).append(" n")

@@ -78,7 +78,7 @@ public class BasicTest extends FunctionalNestedSetTest {
         assert 2 == cat2.getRightValue();
         assert 0 == cat2.getLevel();
         assert cat != cat2;
-        assert true == nsm.getNode(cat2).isRoot();
+        assert nsm.getNode(cat2).isRoot();
     }
 
     @Test
@@ -360,8 +360,8 @@ public class BasicTest extends FunctionalNestedSetTest {
 
         // Test tree
         em.getTransaction().begin();
-        List<Category> nodes = nsm.listNodes(Category.class, 0).stream()
-                .map(n -> n.unwrap())
+        List<Category> nodes = nsm.listNodes(Category.class, 0L).stream()
+                .map(Node::unwrap)
                 .collect(Collectors.toList());
         em.getTransaction().commit();
         // No database operations from here on.

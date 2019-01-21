@@ -32,7 +32,7 @@ public interface Node<T extends NodeInfo> extends NodeInfo {
     T unwrap();
     void delete();
     boolean isRoot();
-    void makeRoot(int newRootId);
+    void makeRoot(Long newRootId);
     boolean hasParent();
     boolean hasChildren();
     boolean isValid();

@@ -22,22 +22,22 @@ import org.pkaboo.jpa.nestedset.annotations.RootColumn;
 @Entity
 public class Category implements NodeInfo {
     @Id @GeneratedValue
-    private int id;
+    private Long id;
     private String name;
 
     @Column(updatable=false)
     @LeftColumn
-    private int lft;
+    private Integer lft;
     @RightColumn
     @Column(updatable=false)
-    private int rgt;
+    private Integer rgt;
     @LevelColumn
     @Column(updatable=false)
-    private int level;
+    private Integer level;
     @RootColumn
-    private int rootId;
+    private Long rootId;
 
-    @Override public int getId() {
+    @Override public Long getId() {
         return this.id;
     }
 
@@ -50,42 +50,42 @@ public class Category implements NodeInfo {
     }
 
     @Override
-    public int getLeftValue() {
+    public Integer getLeftValue() {
         return this.lft;
     }
 
     @Override
-    public int getRightValue() {
+    public Integer getRightValue() {
         return this.rgt;
     }
 
     @Override
-    public int getLevel() {
+    public Integer getLevel() {
         return this.level;
     }
 
     @Override
-    public void setLeftValue(int value) {
+    public void setLeftValue(Integer value) {
         this.lft = value;
     }
 
     @Override
-    public void setRightValue(int value) {
+    public void setRightValue(Integer value) {
         this.rgt = value;
     }
 
     @Override
-    public void setLevel(int level) {
+    public void setLevel(Integer level) {
         this.level = level;
     }
 
     @Override
-    public int getRootValue() {
+    public Long getRootValue() {
         return this.rootId;
     }
 
     @Override
-    public void setRootValue(int value) {
+    public void setRootValue(Long value) {
         this.rootId = value;
     }
 

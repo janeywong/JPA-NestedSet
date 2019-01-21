@@ -1,6 +1,6 @@
 /**
  * LICENSE
- *
+ * <p>
  * This source file is subject to the MIT license that is bundled
  * with this package in the file MIT.txt.
  * It is also available through the world-wide-web at this URL:
@@ -9,16 +9,12 @@
 
 package org.pkaboo.jpa.nestedset;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import net.jcip.annotations.NotThreadSafe;
+import org.pkaboo.jpa.nestedset.annotations.LeftColumn;
+import org.pkaboo.jpa.nestedset.annotations.LevelColumn;
+import org.pkaboo.jpa.nestedset.annotations.RightColumn;
+import org.pkaboo.jpa.nestedset.annotations.RootColumn;
+
 import javax.inject.Inject;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -26,11 +22,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import net.jcip.annotations.NotThreadSafe;
-import org.pkaboo.jpa.nestedset.annotations.LeftColumn;
-import org.pkaboo.jpa.nestedset.annotations.LevelColumn;
-import org.pkaboo.jpa.nestedset.annotations.RightColumn;
-import org.pkaboo.jpa.nestedset.annotations.RootColumn;
+import java.lang.reflect.Field;
+import java.util.*;
 
 /** The default implementation of a JPA {@link NestedSetManager}. */
 @NotThreadSafe
@@ -38,6 +31,7 @@ public class JpaNestedSetManager implements NestedSetManager {
     private final EntityManager em;
     private final Map<Key, Node<?>> nodes;
     private final Map<Class<?>, Configuration> configs;
+    private final Long defaultRootId = 0L;
 
     @Inject
     public JpaNestedSetManager(EntityManager em) {
@@ -75,14 +69,14 @@ public class JpaNestedSetManager implements NestedSetManager {
      */
     @Override
     public <T extends NodeInfo> List<Node<T>> listNodes(Class<T> clazz) {
-        return listNodes(clazz, 0);
+        return listNodes(clazz, defaultRootId);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <T extends NodeInfo> List<Node<T>> listNodes(Class<T> clazz, int rootId) {
+    public <T extends NodeInfo> List<Node<T>> listNodes(Class<T> clazz, Long rootId) {
         Configuration config = getConfig(clazz);
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = cb.createQuery(clazz);
@@ -104,7 +98,7 @@ public class JpaNestedSetManager implements NestedSetManager {
      */
     @Override
     public <T extends NodeInfo> Node<T> createRoot(T root) {
-        if (root.getLeftValue() < root.getRightValue()) {
+        if (root.getLeftValue() != null && root.getRightValue() != null && root.getLeftValue() < root.getRightValue()) {
             throw new IllegalArgumentException("The node already has a position in a tree.");
         }
 
@@ -119,6 +113,11 @@ public class JpaNestedSetManager implements NestedSetManager {
         root.setLeftValue(maximumRight + 1);
         root.setRightValue(maximumRight + 2);
         root.setLevel(0);
+
+        if (root.getRootValue() == null) {
+            root.setRootValue(defaultRootId);
+        }
+
         em.persist(root);
 
         return getNode(root);
@@ -150,20 +149,17 @@ public class JpaNestedSetManager implements NestedSetManager {
             Configuration config = new Configuration();
 
             Entity entity = clazz.getAnnotation(Entity.class);
-        	String name = entity.name();
-        	config.setEntityName((name != null && name.length() > 0) ? name : clazz.getSimpleName());
+            String name = entity.name();
+            config.setEntityName(name.length() > 0 ? name : clazz.getSimpleName());
 
             for (Field field : clazz.getDeclaredFields()) {
                 if (field.getAnnotation(LeftColumn.class) != null) {
                     config.setLeftFieldName(field.getName());
-                }
-                else if (field.getAnnotation(RightColumn.class) != null) {
+                } else if (field.getAnnotation(RightColumn.class) != null) {
                     config.setRightFieldName(field.getName());
-                }
-                else if (field.getAnnotation(LevelColumn.class) != null) {
+                } else if (field.getAnnotation(LevelColumn.class) != null) {
                     config.setLevelFieldName(field.getName());
-                }
-                else if (field.getAnnotation(RootColumn.class) != null) {
+                } else if (field.getAnnotation(RootColumn.class) != null) {
                     config.setRootIdFieldName(field.getName());
                 }
             }
@@ -175,20 +171,20 @@ public class JpaNestedSetManager implements NestedSetManager {
     }
 
     private int getMaximumRight(Class<? extends NodeInfo> clazz) {
-    	Configuration config = getConfig(clazz);
-    	CriteriaBuilder cb = em.getCriteriaBuilder();
-    	CriteriaQuery<? extends NodeInfo> cq = cb.createQuery(clazz);
+        Configuration config = getConfig(clazz);
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<? extends NodeInfo> cq = cb.createQuery(clazz);
         Root<? extends NodeInfo> queryRoot = cq.from(clazz);
         cq.orderBy(cb.desc(queryRoot.get(config.getRightFieldName())));
-        List<? extends NodeInfo>highestRows = em.createQuery(cq).setMaxResults(1).getResultList();
+        List<? extends NodeInfo> highestRows = em.createQuery(cq).setMaxResults(1).getResultList();
         if (highestRows.isEmpty()) {
-        	return 0;
+            return 0;
         } else {
-        	return highestRows.get(0).getRightValue();
+            return highestRows.get(0).getRightValue();
         }
     }
 
-    void applyRootId(Class<?> clazz, CriteriaQuery<?> cq, int rootId) {
+    void applyRootId(Class<?> clazz, CriteriaQuery<?> cq, Long rootId) {
         Configuration config = getConfig(clazz);
         if (config.getRootIdFieldName() != null) {
             Root<?> root = cq.getRoots().iterator().next();
@@ -198,9 +194,9 @@ public class JpaNestedSetManager implements NestedSetManager {
         }
     }
 
-    void updateLeftValues(int minLeft, int maxLeft, int delta, int rootId) {
+    void updateLeftValues(int minLeft, int maxLeft, int delta, Long rootId) {
         for (Node<?> node : this.nodes.values()) {
-            if (node.getRootValue() == rootId) {
+            if (node.getRootValue().equals(rootId)) {
                 if (node.getLeftValue() >= minLeft && (maxLeft == 0 || node.getLeftValue() <= maxLeft)) {
                     node.setLeftValue(node.getLeftValue() + delta);
                 }
@@ -208,9 +204,9 @@ public class JpaNestedSetManager implements NestedSetManager {
         }
     }
 
-    void updateRightValues(int minRight, int maxRight, int delta, int rootId) {
+    void updateRightValues(int minRight, int maxRight, int delta, Long rootId) {
         for (Node<?> node : this.nodes.values()) {
-            if (node.getRootValue() == rootId) {
+            if (node.getRootValue().equals(rootId)) {
                 if (node.getRightValue() >= minRight && (maxRight == 0 || node.getRightValue() <= maxRight)) {
                     node.setRightValue(node.getRightValue() + delta);
                 }
@@ -218,9 +214,9 @@ public class JpaNestedSetManager implements NestedSetManager {
         }
     }
 
-    void updateLevels(int left, int right, int delta, int rootId) {
+    void updateLevels(int left, int right, int delta, Long rootId) {
         for (Node<?> node : this.nodes.values()) {
-            if (node.getRootValue() == rootId) {
+            if (node.getRootValue().equals(rootId)) {
                 if (node.getLeftValue() > left && node.getRightValue() < right) {
                     node.setLevel(node.getLevel() + delta);
                 }
@@ -228,10 +224,10 @@ public class JpaNestedSetManager implements NestedSetManager {
         }
     }
 
-    void removeNodes(int left, int right, int rootId) {
+    void removeNodes(int left, int right, Long rootId) {
         Set<Key> removed = new HashSet<Key>();
         for (Node<?> node : this.nodes.values()) {
-            if (node.getRootValue() == rootId) {
+            if (node.getRootValue().equals(rootId)) {
                 if (node.getLeftValue() >= left && node.getRightValue() <= right) {
                     removed.add(new Key(node.unwrap().getClass(), node.getId()));
                 }
@@ -242,7 +238,7 @@ public class JpaNestedSetManager implements NestedSetManager {
             n.setLeftValue(0);
             n.setRightValue(0);
             n.setLevel(0);
-            n.setRootValue(0);
+            n.setRootValue(0L);
             this.em.detach(n.unwrap());
         }
     }

@@ -1,6 +1,6 @@
 /**
  * LICENSE
- *
+ * <p>
  * This source file is subject to the MIT license that is bundled
  * with this package in the file MIT.txt.
  * It is also available through the world-wide-web at this URL:
@@ -9,9 +9,8 @@
 
 package org.pkaboo.jpa.nestedset;
 
-import java.util.Collection;
-import java.util.List;
 import javax.persistence.EntityManager;
+import java.util.List;
 
 /**
  * A <tt>NestedSetManager</tt> is used to read and manipulate the nested set
@@ -51,7 +50,7 @@ public interface NestedSetManager {
      * @param rootId The tree ID.
      * @return The nodes of the tree.
      */
-    <T extends NodeInfo> List<Node<T>> listNodes(Class<T> clazz, int rootId);
+    <T extends NodeInfo> List<Node<T>> listNodes(Class<T> clazz, Long rootId);
 
     /**
      * Get the EntityManager used by this NestedSetManager.
