@@ -85,11 +85,9 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
 
     @Override
     public String toString() {
-        return "[Left: " + node.getLeftValue() +
-                ", Right: " + node.getRightValue() +
-                ", Level: " + node.getLevel() +
-                ", NodeInfo: " + node.toString() +
-                "]";
+        return "JpaNode{" +
+                "node=" + node +
+                '}';
     }
 
     @Override

@@ -89,7 +89,15 @@ public class Category implements NodeInfo {
         this.rootId = value;
     }
 
-    @Override public String toString() {
-        return "[Category: id=" + this.id + ", name=" + this.name + "-" + super.toString() + "]";
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", lft=" + lft +
+                ", rgt=" + rgt +
+                ", level=" + level +
+                ", rootId=" + rootId +
+                '}';
     }
 }
