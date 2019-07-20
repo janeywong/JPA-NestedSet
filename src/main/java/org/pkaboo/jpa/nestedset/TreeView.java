@@ -1,6 +1,6 @@
 /**
  * LICENSE
- *
+ * <p>
  * This source file is subject to the MIT license that is bundled
  * with this package in the file MIT.txt.
  * It is also available through the world-wide-web at this URL:
@@ -48,7 +48,7 @@ public class TreeView<T extends NodeInfo> {
         for (int i = 1; i < total; ++i) {
             T node = nodes.get(i);
             TreeView<T> tree = new TreeView<>(node);
-            while (ancestors.peek().node.getLevel() >= node.getLevel()) {
+            while (!ancestors.empty() && ancestors.peek().node.getLevel() >= node.getLevel()) {
                 ancestors.pop();
             }
             level = node.getLevel();

@@ -41,10 +41,12 @@ public class Category implements NodeInfo {
         return this.id;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }

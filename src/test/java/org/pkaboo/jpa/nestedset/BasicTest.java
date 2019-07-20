@@ -104,6 +104,10 @@ public class BasicTest extends FunctionalNestedSetTest {
                 assert 1 == node.getLevel();
             }
         }
+
+        List<TreeNode> build = TreeParser.build(0, nodes);
+
+        build.forEach(treeNode -> log.debug("{}", treeNode));
     }
 
     @Test
@@ -179,6 +183,11 @@ public class BasicTest extends FunctionalNestedSetTest {
         assert 10 == root.getRightValue();
 
         assert 5 == this.nsm.getManagedNodes().size();
+
+        List<Node<Category>> nodes = nsm.listNodes(Category.class);
+        TreeParser.build(nodes).forEach(treeNode -> log.debug("{}", treeNode));
+
+        TreeParser.getTreeList(nodes).forEach(treeNode -> log.debug("{}", treeNode));
     }
 
     @Test

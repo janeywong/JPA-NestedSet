@@ -51,6 +51,11 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
         return this.node.getId();
     }
 
+    @Override
+    public String getName() {
+        return this.node.getName();
+    }
+
     @Override public Integer getLeftValue() {
         return this.node.getLeftValue();
     }
@@ -65,6 +70,11 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
 
     @Override public Long getRootValue() {
         return this.node.getRootValue();
+    }
+
+    @Override
+    public void setName(String name) {
+        this.node.setName(name);
     }
 
     @Override public void setRootValue(Long value) {

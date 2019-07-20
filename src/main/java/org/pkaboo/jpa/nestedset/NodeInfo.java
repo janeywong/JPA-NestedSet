@@ -15,10 +15,12 @@ package org.pkaboo.jpa.nestedset;
  */
 public interface NodeInfo {
     Long getId();
+    String getName();
     Integer getLeftValue();
     Integer getRightValue();
     Integer getLevel();
     Long getRootValue();
+    void setName(String name);
     void setLeftValue(Integer value);
     void setRightValue(Integer value);
     void setLevel(Integer level);
