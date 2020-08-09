@@ -19,6 +19,12 @@ public interface TreeEntity<E extends TreeNode> {
     String getName();
 
     /**
+     * 是否为叶子节点
+     * @return
+     */
+    Boolean isParent();
+
+    /**
      * 父级编号
      * @return 父级编号
      */

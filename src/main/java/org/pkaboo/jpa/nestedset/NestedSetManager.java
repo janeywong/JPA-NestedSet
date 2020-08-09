@@ -34,7 +34,7 @@ public interface NestedSetManager {
     <T extends NodeInfo> Node<T> createRoot(T root);
 
     /**
-     * List all nodes of a tree, in ascending order of {@link NodeInfo#getLeftValue}.
+     * List all nodes of a tree, in ascending order of {@link NodeInfo#getLft}.
      *
      * @param <T>
      * @param clazz
@@ -43,7 +43,7 @@ public interface NestedSetManager {
     <T extends NodeInfo> List<Node<T>> listNodes(Class<T> clazz);
 
     /**
-     * List all nodes of a tree, in ascending order of {@link NodeInfo#getLeftValue}.
+     * List all nodes of a tree, in ascending order of {@link NodeInfo#getLft}.
      *
      * @param <T>
      * @param clazz

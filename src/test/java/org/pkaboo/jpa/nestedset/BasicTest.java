@@ -74,8 +74,8 @@ public class BasicTest extends FunctionalNestedSetTest {
         em.clear();
 
         Category cat2 = em.find(Category.class, cat.getId());
-        assert 1 == cat2.getLeftValue();
-        assert 2 == cat2.getRightValue();
+        assert 1 == cat2.getLft();
+        assert 2 == cat2.getRgt();
         assert 0 == cat2.getLevel();
         assert cat != cat2;
         assert nsm.getNode(cat2).isRoot();
@@ -91,16 +91,16 @@ public class BasicTest extends FunctionalNestedSetTest {
         for (int i = 0; i < 3; i++) {
             Node node = iter.next();
             if (i == 0) {
-                assert 1 == node.getLeftValue();
-                assert 6 == node.getRightValue();
+                assert 1 == node.getLft();
+                assert 6 == node.getRgt();
                 assert 0 == node.getLevel();
             } else if (i == 1) {
-                assert 2 == node.getLeftValue();
-                assert 3 == node.getRightValue();
+                assert 2 == node.getLft();
+                assert 3 == node.getRgt();
                 assert 1 == node.getLevel();
             } else {
-                assert 4 == node.getLeftValue();
-                assert 5 == node.getRightValue();
+                assert 4 == node.getLft();
+                assert 5 == node.getRgt();
                 assert 1 == node.getLevel();
             }
         }
@@ -118,8 +118,8 @@ public class BasicTest extends FunctionalNestedSetTest {
 
         Node<Category> progCatNode = nsm.getNode(progCat2);
 
-        assert 1 == progCatNode.getLeftValue();
-        assert 6 == progCatNode.getRightValue();
+        assert 1 == progCatNode.getLft();
+        assert 6 == progCatNode.getRgt();
         assert 0 == progCatNode.getLevel();
         assert null == progCatNode.getParent();
 
@@ -128,8 +128,8 @@ public class BasicTest extends FunctionalNestedSetTest {
         Iterator<Node<Category>> childIter = children.iterator();
         Node child1 = childIter.next();
         Node child2 = childIter.next();
-        assert 2 == child1.getLeftValue();
-        assert 3 == child1.getRightValue();
+        assert 2 == child1.getLft();
+        assert 3 == child1.getRgt();
         assert false == child1.hasChildren();
         assert false == child2.hasChildren();
         assert 0 == child1.getChildren().size();
@@ -147,8 +147,8 @@ public class BasicTest extends FunctionalNestedSetTest {
         Node<Category> root = this.nsm.getNode(em.find(Category.class, this.progCat.getId()));
 
         // Assert basic tree state, a Programming category with 2 child categories.
-        assert 1 == root.getLeftValue();
-        assert 6 == root.getRightValue();
+        assert 1 == root.getLft();
+        assert 6 == root.getRgt();
         assert 2 == root.getChildren().size();
         assert 2 == root.getChildren().size();
 
@@ -161,9 +161,9 @@ public class BasicTest extends FunctionalNestedSetTest {
         root.addChild(phpCat);
         em.getTransaction().commit();
 
-        assert 6 == phpCat.getLeftValue();
-        assert 7 == phpCat.getRightValue();
-        assert 8 == root.getRightValue();
+        assert 6 == phpCat.getLft();
+        assert 7 == phpCat.getRgt();
+        assert 8 == root.getRgt();
         assert 3 == root.getChildren().size();
 
         // Add Java EE category under Java
@@ -175,12 +175,12 @@ public class BasicTest extends FunctionalNestedSetTest {
         em.getTransaction().commit();
 
         assert 3 == root.getChildren().size();
-        assert 3 == jeeCat.getLeftValue();
-        assert 4 == jeeCat.getRightValue();
+        assert 3 == jeeCat.getLft();
+        assert 4 == jeeCat.getRgt();
         assert 2 == jeeCat.getLevel();
-        assert 2 == javaNode.getLeftValue();
-        assert 5 == javaNode.getRightValue();
-        assert 10 == root.getRightValue();
+        assert 2 == javaNode.getLft();
+        assert 5 == javaNode.getRgt();
+        assert 10 == root.getRgt();
 
         assert 5 == this.nsm.getManagedNodes().size();
 
@@ -207,10 +207,10 @@ public class BasicTest extends FunctionalNestedSetTest {
         Category wpfCat = new Category();
         wpfCat.setName("WPF");
         Node<Category> wpfNode = progNode.addChild(wpfCat);
-        assert 6 == wpfNode.getLeftValue();
-        assert 7 == wpfNode.getRightValue();
+        assert 6 == wpfNode.getLft();
+        assert 7 == wpfNode.getRgt();
         assert 1 == wpfNode.getLevel();
-        assert 8 == progNode.getRightValue();
+        assert 8 == progNode.getRgt();
 
         // Now move it under the .NET category where it really belongs
         /*
@@ -222,12 +222,12 @@ public class BasicTest extends FunctionalNestedSetTest {
         */
         Node<Category> netNode = this.nsm.getNode(em.find(Category.class, this.netCat.getId()));
         wpfNode.moveAsFirstChildOf(netNode);
-        assert 4 == netNode.getLeftValue();
-        assert 7 == netNode.getRightValue();
-        assert 5 == wpfNode.getLeftValue();
-        assert 6 == wpfNode.getRightValue();
+        assert 4 == netNode.getLft();
+        assert 7 == netNode.getRgt();
+        assert 5 == wpfNode.getLft();
+        assert 6 == wpfNode.getRgt();
         assert 2 == wpfNode.getLevel();
-        assert 8 == progNode.getRightValue();
+        assert 8 == progNode.getRgt();
 
         // Create another category "EJB" under "Programming" that doesnt really belong there
         /*
@@ -240,9 +240,9 @@ public class BasicTest extends FunctionalNestedSetTest {
         Category ejbCat = new Category();
         ejbCat.setName("EJB");
         Node<Category> ejbNode = progNode.addChild(ejbCat);
-        assert 8 == ejbNode.getLeftValue();
-        assert 9 == ejbNode.getRightValue();
-        assert 10 == progNode.getRightValue();
+        assert 8 == ejbNode.getLft();
+        assert 9 == ejbNode.getRgt();
+        assert 10 == progNode.getRgt();
 
         // Move it under "Java" where it belongs
         /*
@@ -254,13 +254,13 @@ public class BasicTest extends FunctionalNestedSetTest {
         */
         Node<Category> javaNode = this.nsm.getNode(em.find(Category.class, this.javaCat.getId()));
         ejbNode.moveAsLastChildOf(javaNode);
-        assert 3 == ejbNode.getLeftValue();
-        assert 4 == ejbNode.getRightValue();
+        assert 3 == ejbNode.getLft();
+        assert 4 == ejbNode.getRgt();
         assert 2 == ejbNode.getLevel();
-        assert 5 == javaNode.getRightValue();
-        assert 6 == netNode.getLeftValue();
-        assert 9 == netNode.getRightValue();
-        assert 10 == progNode.getRightValue();
+        assert 5 == javaNode.getRgt();
+        assert 6 == netNode.getLft();
+        assert 9 == netNode.getRgt();
+        assert 10 == progNode.getRgt();
 
         printTree(progNode);
 
@@ -276,10 +276,10 @@ public class BasicTest extends FunctionalNestedSetTest {
 
         em.getTransaction().begin();
         // fetch the tree
-        Node<Category> progNode = nsm.listNodes(Category.class, this.progCat.getRootValue()).get(0);
+        Node<Category> progNode = nsm.listNodes(Category.class, this.progCat.getRoot()).get(0);
         assertEquals(progNode.getChildren().size(), 2);
-        assert 1 == progNode.getLeftValue();
-        assert 6 == progNode.getRightValue();
+        assert 1 == progNode.getLft();
+        assert 6 == progNode.getRgt();
 
         // delete the .NET node
         Category netCat2 = em.find(Category.class, this.netCat.getId());
@@ -287,8 +287,8 @@ public class BasicTest extends FunctionalNestedSetTest {
         netNode.delete();
 
         // check in-memory state of tree
-        assert 1 == progNode.getLeftValue();
-        assert 4 == progNode.getRightValue();
+        assert 1 == progNode.getLft();
+        assert 4 == progNode.getRgt();
         assertFalse(em.contains(netCat2));
         assertTrue(em.contains(progNode.unwrap()));
         assertEquals(progNode.getChildren().size(), 1);

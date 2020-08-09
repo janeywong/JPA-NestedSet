@@ -58,7 +58,7 @@ public class TreeParser {
 
     private static <T extends NodeInfo> List<TreeNode> getSubList(T parent, List<T> bedList) {
         List<TreeNode> subList = bedList.stream()
-                .filter(bed -> bed.getLevel().equals(parent.getLevel() + 1) && bed.getLeftValue() > parent.getLeftValue() && bed.getRightValue() < parent.getRightValue())
+                .filter(bed -> bed.getLevel().equals(parent.getLevel() + 1) && bed.getLft() > parent.getLft() && bed.getRgt() < parent.getRgt())
                 .map(bed -> {
                     TreeNode treeNode = new TreeNode();
                     treeNode.setId(bed.getId());
@@ -88,7 +88,7 @@ public class TreeParser {
 
     private static <T extends NodeInfo> List<TreeNode> getSub(T parent, List<T> nodes) {
         List<TreeNode> subList = nodes.stream()
-                .filter(t -> t.getLevel().equals(parent.getLevel() + 1) && t.getLeftValue() > parent.getLeftValue() && t.getRightValue() < parent.getRightValue())
+                .filter(t -> t.getLevel().equals(parent.getLevel() + 1) && t.getLft() > parent.getLft() && t.getRgt() < parent.getRgt())
                 .map(t -> {
                     TreeNode treeNode = new TreeNode();
                     treeNode.setId(t.getId());

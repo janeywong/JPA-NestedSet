@@ -98,7 +98,7 @@ public class JpaNestedSetManager implements NestedSetManager {
      */
     @Override
     public <T extends NodeInfo> Node<T> createRoot(T root) {
-        if (root.getLeftValue() != null && root.getRightValue() != null && root.getLeftValue() < root.getRightValue()) {
+        if (root.getLft() != null && root.getRgt() != null && root.getLft() < root.getRgt()) {
             throw new IllegalArgumentException("The node already has a position in a tree.");
         }
 
@@ -110,12 +110,12 @@ public class JpaNestedSetManager implements NestedSetManager {
         } else {
             maximumRight = getMaximumRight(root.getClass());
         }
-        root.setLeftValue(maximumRight + 1);
-        root.setRightValue(maximumRight + 2);
+        root.setLft(maximumRight + 1);
+        root.setRgt(maximumRight + 2);
         root.setLevel(0);
 
-        if (root.getRootValue() == null) {
-            root.setRootValue(defaultRootId);
+        if (root.getRoot() == null) {
+            root.setRoot(defaultRootId);
         }
 
         em.persist(root);
@@ -180,7 +180,7 @@ public class JpaNestedSetManager implements NestedSetManager {
         if (highestRows.isEmpty()) {
             return 0;
         } else {
-            return highestRows.get(0).getRightValue();
+            return highestRows.get(0).getRgt();
         }
     }
 
@@ -196,9 +196,9 @@ public class JpaNestedSetManager implements NestedSetManager {
 
     void updateLeftValues(int minLeft, int maxLeft, int delta, Long rootId) {
         for (Node<?> node : this.nodes.values()) {
-            if (node.getRootValue().equals(rootId)) {
-                if (node.getLeftValue() >= minLeft && (maxLeft == 0 || node.getLeftValue() <= maxLeft)) {
-                    node.setLeftValue(node.getLeftValue() + delta);
+            if (node.getRoot().equals(rootId)) {
+                if (node.getLft() >= minLeft && (maxLeft == 0 || node.getLft() <= maxLeft)) {
+                    node.setLft(node.getLft() + delta);
                 }
             }
         }
@@ -206,9 +206,9 @@ public class JpaNestedSetManager implements NestedSetManager {
 
     void updateRightValues(int minRight, int maxRight, int delta, Long rootId) {
         for (Node<?> node : this.nodes.values()) {
-            if (node.getRootValue().equals(rootId)) {
-                if (node.getRightValue() >= minRight && (maxRight == 0 || node.getRightValue() <= maxRight)) {
-                    node.setRightValue(node.getRightValue() + delta);
+            if (node.getRoot().equals(rootId)) {
+                if (node.getRgt() >= minRight && (maxRight == 0 || node.getRgt() <= maxRight)) {
+                    node.setRgt(node.getRgt() + delta);
                 }
             }
         }
@@ -216,8 +216,8 @@ public class JpaNestedSetManager implements NestedSetManager {
 
     void updateLevels(int left, int right, int delta, Long rootId) {
         for (Node<?> node : this.nodes.values()) {
-            if (node.getRootValue().equals(rootId)) {
-                if (node.getLeftValue() > left && node.getRightValue() < right) {
+            if (node.getRoot().equals(rootId)) {
+                if (node.getLft() > left && node.getRgt() < right) {
                     node.setLevel(node.getLevel() + delta);
                 }
             }
@@ -227,18 +227,18 @@ public class JpaNestedSetManager implements NestedSetManager {
     void removeNodes(int left, int right, Long rootId) {
         Set<Key> removed = new HashSet<Key>();
         for (Node<?> node : this.nodes.values()) {
-            if (node.getRootValue().equals(rootId)) {
-                if (node.getLeftValue() >= left && node.getRightValue() <= right) {
+            if (node.getRoot().equals(rootId)) {
+                if (node.getLft() >= left && node.getRgt() <= right) {
                     removed.add(new Key(node.unwrap().getClass(), node.getId()));
                 }
             }
         }
         for (Key k : removed) {
             Node<?> n = this.nodes.remove(k);
-            n.setLeftValue(0);
-            n.setRightValue(0);
+            n.setLft(0);
+            n.setRgt(0);
             n.setLevel(0);
-            n.setRootValue(0L);
+            n.setRoot(0L);
             this.em.detach(n.unwrap());
         }
     }

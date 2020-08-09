@@ -37,7 +37,7 @@ public class TreeView<T extends NodeInfo> {
     }
 
     // nodes must be non-empty
-    // nodes must be sorted by {@link NodeInfo#getLeftValue}
+    // nodes must be sorted by {@link NodeInfo#getLft}
     public static <T extends NodeInfo> TreeView<T> build(List<T> nodes, int maxLevel) {
         TreeView<T> root = new TreeView<>(nodes.get(0));
         Stack<TreeView<T>> ancestors = new Stack<>();
@@ -57,7 +57,7 @@ public class TreeView<T extends NodeInfo> {
             tree.parent = parent;
             parent.children.add(tree);
 
-            boolean hasChildren = node.getRightValue() - node.getLeftValue() > 1;
+            boolean hasChildren = node.getRgt() - node.getLft() > 1;
             if (hasChildren && (maxLevel == -1 || maxLevel > level)) {
                 ancestors.push(tree);
             }

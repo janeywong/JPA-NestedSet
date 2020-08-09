@@ -1,5 +1,7 @@
 package org.pkaboo.jpa.nestedset;
 
+import org.springframework.util.CollectionUtils;
+
 import java.util.List;
 
 /**
@@ -41,6 +43,11 @@ public class TreeNode implements TreeEntity<TreeNode> {
         return name;
     }
 
+    @Override
+    public Boolean isParent() {
+        return CollectionUtils.isEmpty(children);
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -68,6 +75,7 @@ public class TreeNode implements TreeEntity<TreeNode> {
         return "TreeNode{" +
             "id=" + id +
             ", parentId=" + parentId +
+            ", isParent=" + isParent() +
             ", name='" + name + '\'' +
             ", children=" + children +
             '}';

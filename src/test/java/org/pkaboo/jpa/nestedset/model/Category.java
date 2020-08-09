@@ -52,12 +52,12 @@ public class Category implements NodeInfo {
     }
 
     @Override
-    public Integer getLeftValue() {
+    public Integer getLft() {
         return this.lft;
     }
 
     @Override
-    public Integer getRightValue() {
+    public Integer getRgt() {
         return this.rgt;
     }
 
@@ -67,12 +67,12 @@ public class Category implements NodeInfo {
     }
 
     @Override
-    public void setLeftValue(Integer value) {
+    public void setLft(Integer value) {
         this.lft = value;
     }
 
     @Override
-    public void setRightValue(Integer value) {
+    public void setRgt(Integer value) {
         this.rgt = value;
     }
 
@@ -82,12 +82,12 @@ public class Category implements NodeInfo {
     }
 
     @Override
-    public Long getRootValue() {
+    public Long getRoot() {
         return this.rootId;
     }
 
     @Override
-    public void setRootValue(Long value) {
+    public void setRoot(Long value) {
         this.rootId = value;
     }
 

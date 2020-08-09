@@ -18,15 +18,15 @@ public class MultiRootNodeTest extends FunctionalNestedSetTest {
     public void testCreateTrees() {
         Category javaCat = new Category();
         javaCat.setName("Java");
-        javaCat.setRootValue(1L);
+        javaCat.setRoot(1L);
 
         Category netCat = new Category();
         netCat.setName(".NET");
-        netCat.setRootValue(2L);
+        netCat.setRoot(2L);
 
         Category phpCat = new Category();
         phpCat.setName("PHP");
-        phpCat.setRootValue(3L);
+        phpCat.setRoot(3L);
 
         em.getTransaction().begin();
         nsm.createRoot(javaCat);
@@ -34,12 +34,12 @@ public class MultiRootNodeTest extends FunctionalNestedSetTest {
         nsm.createRoot(phpCat);
         em.getTransaction().commit();
 
-        assert 1 == javaCat.getLeftValue();
-        assert 2 == javaCat.getRightValue();
-        assert 1 == netCat.getLeftValue();
-        assert 2 == netCat.getRightValue();
-        assert 1 == phpCat.getLeftValue();
-        assert 2 == phpCat.getRightValue();
+        assert 1 == javaCat.getLft();
+        assert 2 == javaCat.getRgt();
+        assert 1 == netCat.getLft();
+        assert 2 == netCat.getRgt();
+        assert 1 == phpCat.getLft();
+        assert 2 == phpCat.getRgt();
 
         em.getTransaction().begin();
         Node<Category> javaNode = nsm.getNode(javaCat);
@@ -48,16 +48,16 @@ public class MultiRootNodeTest extends FunctionalNestedSetTest {
         Node<Category> ejbNode = javaNode.addChild(ejbCat);
         em.getTransaction().commit();
 
-        assert 1 == javaCat.getLeftValue();
-        assert 2 == ejbCat.getLeftValue();
-        assert 3 == ejbCat.getRightValue();
+        assert 1 == javaCat.getLft();
+        assert 2 == ejbCat.getLft();
+        assert 3 == ejbCat.getRgt();
         assert 1 == ejbCat.getLevel();
-        assert 1 == ejbCat.getRootValue();
-        assert 4 == javaCat.getRightValue();
-        assert 1 == netCat.getLeftValue();
-        assert 2 == netCat.getRightValue();
-        assert 1 == phpCat.getLeftValue();
-        assert 2 == phpCat.getRightValue();
+        assert 1 == ejbCat.getRoot();
+        assert 4 == javaCat.getRgt();
+        assert 1 == netCat.getLft();
+        assert 2 == netCat.getRgt();
+        assert 1 == phpCat.getLft();
+        assert 2 == phpCat.getRgt();
 
         // move between trees
 
@@ -70,15 +70,15 @@ public class MultiRootNodeTest extends FunctionalNestedSetTest {
         em.refresh(phpCat);
         em.getTransaction().commit();
 
-        assert 1 == javaCat.getLeftValue();
-        assert 2 == javaCat.getRightValue();
-        assert 1 == netNode.getLeftValue();
-        assert 2 == ejbNode.getLeftValue();
-        assert 3 == ejbNode.getRightValue();
-        assert 2 == ejbNode.getRootValue();
-        assert 4 == netNode.getRightValue();
-        assert 1 == phpCat.getLeftValue();
-        assert 2 == phpCat.getRightValue();
+        assert 1 == javaCat.getLft();
+        assert 2 == javaCat.getRgt();
+        assert 1 == netNode.getLft();
+        assert 2 == ejbNode.getLft();
+        assert 3 == ejbNode.getRgt();
+        assert 2 == ejbNode.getRoot();
+        assert 4 == netNode.getRgt();
+        assert 1 == phpCat.getLft();
+        assert 2 == phpCat.getRgt();
 
     }
 
