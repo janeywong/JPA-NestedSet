@@ -237,6 +237,8 @@ class JpaNode<T extends NodeInfo> implements Node<T> {
 
         if(ObjectUtils.isEmpty(child.getId())){
             nsm.getEntityManager().persist(child);
+        }else{
+            nsm.getEntityManager().merge(child);
         }
 
 
